@@ -4,6 +4,7 @@
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (ido-mode t)
+(winner-mode t)
 
 (setq fill-column 80)
 (setq indent-tabs-mode nil)

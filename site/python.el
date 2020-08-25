@@ -2,35 +2,8 @@
 
 (use-package flycheck)
 
-(use-package elpy
-  :bind
-  (:map elpy-mode-map
-        ("C-M-n" . elpy-nav-forward-block)
-        ("C-M-p" . elpy-nav-backward-block))
-  :hook ((elpy-mode . flycheck-mode)
-         (elpy-mode . (lambda ()
-                        (set (make-local-variable 'company-backends)
-                             '((elpy-company-backend :with company-yasnippet))))))
-  :init
-  (elpy-enable)
-  :config
-  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-  (setq elpy-shell-echo-output nil)
-  (setq elpy-rpc-python-command "python")
-  (setq elpy-rpc-timeout 2))
-
-(use-package company
-  :diminish company-mode
-  :init
-  (global-company-mode)
-  :config
-  ;; set default `company-backends'
-  (setq company-backends
-        '((company-files          ; files & directory
-           company-keywords       ; keywords
-           company-capf)  ; completion-at-point-functions
-          (company-abbrev company-dabbrev)
-          ))
+(use-package lsp-mode
+  :commands lsp)
 
 (use-package company-statistics
     :init
@@ -46,17 +19,24 @@
 
 (use-package company-quickhelp
     :config
-    (company-quickhelp-mode)))
+    (company-quickhelp-mode))
 
 (use-package pyenv
     :straight (:host github :repo "aiguofer/pyenv.el")
     :config
+    (setq pyenv-installation-dir (getenv "PYENV"))    
     (setq pyenv-use-alias 't)
     (setq pyenv-modestring-postfix nil)
-    (setq pyenv-set-path nil)
+    (setq pyenv-set-path (getenv "PYENV_ROOT"))
 
 (global-pyenv-mode)
     (defun pyenv-update-on-buffer-switch (prev curr)
       (if (string-equal "Python" (format-mode-line mode-name nil nil curr))
           (pyenv-use-corresponding)))
     (add-hook 'switch-buffer-functions 'pyenv-update-on-buffer-switch))
+
+(setq 
+ python-shell-interpreter "ipython"
+ python-shell-interpreter-args "--colors=Linux --profile=default"
+ python-shell-prompt-regexp "In \\[0-9]+\\]: "
+ python-shell-prompt-output-regexp "Out \\[0-9]+\\]:")

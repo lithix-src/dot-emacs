@@ -3,19 +3,21 @@
 ;; require latest built in macros and libraries
 (require 'cl-lib)
 
+(set-face-attribute 'default nil :height 120)
+
 ;; where we install packages
 (setq site-dir "./site")
 
 ;; keep all the auto saves and shadow files in one place
 (setq temporary-file-dir
       (concat
-       emacs-home-dir
+       "./"
        "auto-saves"))
 
 ;; keep all the auto saves and shadow files in one place
 (setq temporary-file-dir
       (concat
-       emacs-home-dir
+       "./"
        "auto-saves"))
 
 (setq backup-directory-alist
@@ -73,18 +75,14 @@
 (add-hook 'after-init-hook
 	  (load "packages"))
 
-
 ;;;; ui
 (add-hook 'after-init-time
 	  (load "ui"))
 
 ;;;; customizations
 (add-hook 'after-init-hook
-          (load "editing"))
+          (load "edit"))
 
-;;;; navigation
+;;;; coding
 (add-hook 'after-init-hook
-          (load "nav"))
-
-(add-hook 'after-init-hook
-          (load "misc"))
+          (load "python"))
