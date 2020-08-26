@@ -8,6 +8,11 @@
 (setq-default large-file-warning-threshold 100000000)
 (setq-default backup-inhibited t)
 
+;; display time in mode-line
+(setq display-time-string-forms
+      '((propertize (format-time-string "%A %F %R" now) 'face 'bold)))
+(display-time-mode t)
+
 ;; where we install packages
 (setq site-dir "./site")
 
@@ -39,6 +44,10 @@
 
 ;; enable native clipboard
 (setq x-select-enabled-clipboard t)
+
+;; file nav
+(setq dired-dwim-target t)
+(setq dired-garbage-files-regexp "\\(?:\\.\\(?:aux\\|bak\\|bbl\\|bcf\\|dvi\\|log\\|rej\\|toc\\)\\)\\'")
 
 ;; add a final new line to files before closing
 (setq require-final-newline t)

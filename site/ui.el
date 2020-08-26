@@ -22,3 +22,18 @@
 (use-package doom-themes
   :config
   (load-theme 'doom-gruvbox t))
+
+(defun my-vsplit-last-buffer ()
+  (interactive)
+  (split-window-vertically)
+  (other-window 1 nil)
+  (switch-to-next-buffer))
+
+(defun my-hsplit-last-buffer ()
+  (interactive)
+  (split-window-horizontally)
+  (other-window 1 nil)
+  (switch-to-next-buffer))
+
+(bind-key "C-x 2" 'my-vsplit-last-buffer)
+(bind-key "C-x 3" 'my-hsplit-last-buffer)

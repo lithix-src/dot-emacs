@@ -74,3 +74,64 @@
   )
 
 (use-package popup)
+
+(use-package nyan-mode
+  :ensure t ;; install package if not found OR: (setq use-package-always-ensure t)
+  :init
+  (setq nyan-bar-length 20)
+  :config
+  (nyan-mode t))
+
+(use-package smart-mode-line
+  :ensure t ;; install package if not found OR: (setq use-package-always-ensure t)
+  :config
+  (setq sml/no-confirm-load-theme t)
+  (setq sml/theme 'respectful) ;; select theme: light, dark, respectful
+  ;; hiding minor modes from mode line (don't forget the leading space)
+  (setq rm-blacklist '(" Fill" " Ind" " MRev" " hl-p" " Guide" " OrgStruct" " ," " PCRE" " counsel" " OTSH" " dired-icon" " GitGutter" " WK" " FlyC-" " Ddl" " Diary"))
+  ;; does not hide in Org-agenda:  "Diary " "Ddl " "Grid " "Habit " "FlyC " "WK "
+  ;; replacing path names with abbrevations:
+  (add-to-list 'sml/replacer-regexp-list '("^.*/.emacs.d" ":EMACS:") t)
+  (add-to-list 'sml/replacer-regexp-list '("^.*/projects/" ":PRJ:") t)
+  (add-to-list 'sml/replacer-regexp-list '("^.*/projects/compliance_science" ":TEP:") t)
+  (smart-mode-line-enable))
+
+;; icons in mode-line instead of text
+(use-package mode-icons
+  :config
+  (mode-icons-mode))
+
+;;(defalias 'list-buffers 'ibuffer)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+(autoload 'ibuffer "ibuffer" "List buffers." t)
+
+(setq ibuffer-saved-filter-groups
+      (quote (("default"
+               ("dired" (mode . dired-mode))
+               ("PDF" (mode . pdf-view-mode))
+               ("python" (mode . python-mode))
+               ("org" (or (mode . org-mode)
+                          (mode . org-agenda-mode)
+                          ))
+;;               ("erc" (mode . erc-mode))
+               ("emacs" (or
+                         (name . "^\\*scratch\\*$")
+                         (name . "^\\*Messages\\*$")))
+               ("planner" (or
+                           (name . "^\\*Calendar\\*$")
+                           (name . "^diary$")
+                           (mode . muse-mode)))
+;;               ("gnus" (or
+;;                        (mode . message-mode)
+;;                        (mode . bbdb-mode)
+;;                        (mode . mail-mode)
+;;                        (mode . gnus-group-mode)
+;;                        (mode . gnus-summary-mode)
+;;                        (mode . gnus-article-mode)
+;;                        (name . "^\\.bbdb$")
+;;                        (name . "^\\.newsrc-dribble")))
+               ))))
+
+  (add-hook 'ibuffer-mode-hook
+            (lambda ()
+              (ibuffer-switch-to-saved-filter-groups "default")))
