@@ -6,6 +6,11 @@
 ;; highlight matching parans
 (show-paren-mode t)
 
+;; letter casing
+(global-set-key [M-l] 'downcase-word)
+(global-set-key [M-u] 'upcase-word)
+(global-set-key [M-c] 'capitalize-word)
+
 ;; hold shift to move through windows
 (windmove-default-keybindings)
 (global-set-key (kbd "M-s-<left>")  'windmove-left)

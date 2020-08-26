@@ -4,6 +4,9 @@
 (require 'cl-lib)
 
 (set-face-attribute 'default nil :height 120)
+(setq-default truncate-lines t)
+(setq-default large-file-warning-threshold 100000000)
+(setq-default backup-inhibited t)
 
 ;; where we install packages
 (setq site-dir "./site")
@@ -39,7 +42,6 @@
 
 ;; add a final new line to files before closing
 (setq require-final-newline t)
-
 ;; enable site configs dir
 (add-to-list 'load-path
 	     (expand-file-name "site" "~/.emacs.d"))
