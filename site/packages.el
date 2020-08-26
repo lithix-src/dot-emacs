@@ -70,8 +70,7 @@
   (add-to-list 'ac-modes 'web-mode)
   (add-to-list 'ac-modes 'elsip-mode)
   (add-to-list 'ac-modes 'python-mode)
-  (add-to-list 'ac-modes 'cider-mode)
-  )
+  (add-to-list 'ac-modes 'cider-mode))
 
 (use-package popup)
 
@@ -101,6 +100,7 @@
   :config
   (mode-icons-mode))
 
+
 ;;(defalias 'list-buffers 'ibuffer)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (autoload 'ibuffer "ibuffer" "List buffers." t)
@@ -108,30 +108,14 @@
 (setq ibuffer-saved-filter-groups
       (quote (("default"
                ("dired" (mode . dired-mode))
-               ("PDF" (mode . pdf-view-mode))
                ("python" (mode . python-mode))
                ("org" (or (mode . org-mode)
                           (mode . org-agenda-mode)
                           ))
-;;               ("erc" (mode . erc-mode))
                ("emacs" (or
                          (name . "^\\*scratch\\*$")
-                         (name . "^\\*Messages\\*$")))
-               ("planner" (or
-                           (name . "^\\*Calendar\\*$")
-                           (name . "^diary$")
-                           (mode . muse-mode)))
-;;               ("gnus" (or
-;;                        (mode . message-mode)
-;;                        (mode . bbdb-mode)
-;;                        (mode . mail-mode)
-;;                        (mode . gnus-group-mode)
-;;                        (mode . gnus-summary-mode)
-;;                        (mode . gnus-article-mode)
-;;                        (name . "^\\.bbdb$")
-;;                        (name . "^\\.newsrc-dribble")))
-               ))))
+                         (name . "^\\*Messages\\*$")))))))
 
-  (add-hook 'ibuffer-mode-hook
-            (lambda ()
-              (ibuffer-switch-to-saved-filter-groups "default")))
+(add-hook 'ibuffer-mode-hook
+          (lambda ()
+            (ibuffer-switch-to-saved-filter-groups "default")))
