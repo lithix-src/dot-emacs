@@ -2,7 +2,26 @@
 
 (use-package flycheck)
 
+(use-package python-mode
+  :bind (:map python-mode-map
+              ("C-c C-l" . py-send-file)
+              ("C-c C-r" . py-send-region-ipython)
+              ("C-c C-s" . py-send-string)
+              ("C-c C-z" . py-switch-to-shell)))
+
 (use-package lsp-mode
+  :ensure t
+  :config
+  (use-package lsp-ui
+    :config
+    (setq lsp-ui-sideline-ignore-duplicate t)
+    (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+
+  (use-package company-lsp
+    :config
+    (push 'company-lsp company-backends))
+
+  
   :commands lsp)
 
 (use-package company-statistics
@@ -37,6 +56,6 @@
 
 (setq 
  python-shell-interpreter "ipython"
- python-shell-interpreter-args "--colors=Linux --profile=default"
+ python-shell-interpreter-args "--colors=Linux --profile=default -i"
  python-shell-prompt-regexp "In \\[0-9]+\\]: "
  python-shell-prompt-output-regexp "Out \\[0-9]+\\]:")
