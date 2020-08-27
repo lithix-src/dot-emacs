@@ -119,3 +119,11 @@
 (add-hook 'ibuffer-mode-hook
           (lambda ()
             (ibuffer-switch-to-saved-filter-groups "default")))
+
+(use-package ansible
+  :config
+  (add-hook 'yaml-mode-hook '(lambda () (ansible 1)))
+  :bind
+  (
+   ("C-, b" . 'ansible-decrypt-buffer)
+   ("C-, b" . 'ansible-encrypt-buffer)))
