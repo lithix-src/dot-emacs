@@ -82,6 +82,10 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+;;;; global configs
+(add-hook 'after-init-hook
+	  (load "global"))
+
 ;;;; package setup
 (add-hook 'after-init-hook
 	  (load "packages"))
