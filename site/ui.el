@@ -37,3 +37,12 @@
 
 (bind-key "C-x 2" 'my-vsplit-last-buffer)
 (bind-key "C-x 3" 'my-hsplit-last-buffer)
+
+;; Turn off the menu bar at the top of each frame because it's distracting
+(menu-bar-mode -1)
+
+;; Show line numbers
+;; (global-linum-mode -1)
+
+;; No cursor blinking, it's distracting
+(blink-cursor-mode 0)

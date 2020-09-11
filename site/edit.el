@@ -59,9 +59,6 @@
 (recentf-mode 1)
 (setq recentf-max-menu-items 40)
 
-;;;; plugin configs
-
-
 ;; Automatically load paredit when editing a lisp file
 ;; More at http://www.emacswiki.org/emacs/ParEdit
 (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
@@ -77,3 +74,8 @@
 (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
 (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
 (add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
+
+(when
+    (member "Hack" (font-family-list))
+  (set-face-attribute 'default nil :font "Hack")
+  (set-frame-font "Hack" nil t))

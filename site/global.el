@@ -35,5 +35,3 @@
 (defvar ido-cur-list nil)
 (defvar predicate nil)
 (defvar inherit-input-method nil)
-
-

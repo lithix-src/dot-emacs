@@ -90,6 +90,10 @@
 (add-hook 'after-init-hook
 	  (load "packages"))
 
+;;;; navigation
+(add-hook 'after-init-hook
+          (load "nav"))
+
 ;;;; ui
 (add-hook 'after-init-time
 	  (load "ui"))
@@ -101,3 +105,6 @@
 ;;;; coding
 (add-hook 'after-init-hook
           (load "python"))
+
+(add-hook 'after-init-hook
+          (load "clojure"))

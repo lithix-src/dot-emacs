@@ -109,6 +109,11 @@
       (quote (("default"
                ("dired" (mode . dired-mode))
                ("python" (mode . python-mode))
+               ("yaml" (mode . yaml-mode))
+               (("ansible") (mode . ansible-mode))
+               (("bash") (mode . shell-script-mode))
+               (("cmd") (mode . bat-mode))
+               (("hcl") (mode . hcl-mode))
                ("org" (or (mode . org-mode)
                           (mode . org-agenda-mode)
                           ))
@@ -120,6 +125,11 @@
           (lambda ()
             (ibuffer-switch-to-saved-filter-groups "default")))
 
+(use-package yaml-mode
+  :config
+  (add-to-list
+   'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
+
 (use-package ansible
   :config
   (add-hook 'yaml-mode-hook '(lambda () (ansible 1)))
@@ -127,3 +137,10 @@
   (
    ("C-, b" . 'ansible-decrypt-buffer)
    ("C-, b" . 'ansible-encrypt-buffer)))
+
+(use-package hcl-mode
+  :config
+  (add-to-list
+   'auto-mode-alist
+   '("\\.tf\\'" . hcl-mode)
+   '(("\\.nomad\\'" hcl-mode))))
