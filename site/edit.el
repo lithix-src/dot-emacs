@@ -1,36 +1,5 @@
 ;; site/edit.el
 ;; allow for loading current directory configs
-;; and ensure file references
-(add-to-list 'load-path
-             (expand-file-name "./"))
-
-(add-to-list 'auto-mode-alist
-             '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))
-
-(require org-mode)
-
-
-;; key bindings
-(global-set-key "\C-cl" 'org-)
-(global-set-key "\C-ca" 'org-agenda)
-(global-set-key (kbd "<f12>") 'org-agenda)
-(global-set-key "\C-cb" 'org-iswitchb)
-
-;; tasks and environment context
-(setq org-agenda-files (quote ("../"
-                               "../tep")))
-( org-todo-keywords
-      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
-
-(setq org-todo-state-tags-triggers
-      (quote (("CANCELLED" ("CANCELLED" . t))
-              ("WAITING" ("WAITING" . t))
-              ("HOLD" ("WAITING") ("HOLD" . t))
-              (done ("WAITING") ("HOLD"))
-              ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
 
 ;; http://www.emacswiki.org/emacs/HippieExpand
 (global-set-key (kbd "M-/") 'hippie-expand)

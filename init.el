@@ -103,9 +103,14 @@
 (add-hook 'after-init-hook
           (load "edit"))
 
+(add-hook 'after-init-hook
+          (load "org"))
+
 ;;;; coding
 (add-hook 'after-init-hook
           (load "python"))
 
 (add-hook 'after-init-hook
           (load "clojure"))
+
+(put 'narrow-to-region 'disabled nil)
