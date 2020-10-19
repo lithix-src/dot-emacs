@@ -3,10 +3,37 @@
 ;; require latest built in macros and libraries
 (require 'cl-lib)
 
+;; set the garbage collection threshold to
+;; every 20mb allocations
+(setq gc-cons-threshold 20000000)
 (set-face-attribute 'default nil :height 120)
 (setq-default truncate-lines t)
 (setq-default large-file-warning-threshold 100000000)
 (setq-default backup-inhibited t)
+
+;; Profile emacs startup
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (message "*** Emacs loaded in %s with %d garbage collections."
+                     (format "%.2f seconds"
+                             (float-time
+                              (time-subtract after-init-time before-init-time)))
+                     gcs-done)))
+
+;; Keep transient cruft out of ~/.emacs.d/
+(setq user-emacs-directory "~/.cache/emacs/"
+      backup-directory-alist `(("." . ,(expand-file-name "backups" user-emacs-directory)))
+      url-history-file (expand-file-name "url/history" user-emacs-directory)
+      auto-save-list-file-prefix (expand-file-name "auto-save-list/.saves-" user-emacs-directory)
+      projectile-known-projects-file (expand-file-name "projectile-bookmarks.eld" user-emacs-directory))
+
+;; Keep customization settings in a temporary file (thanks Ambrevar!)
+(setq custom-file
+      (if (boundp 'server-socket-dir)
+          (expand-file-name "custom.el" server-socket-dir)
+        (expand-file-name (format "emacs-custom-%s.el" (user-uid)) temporary-file-directory)))
+
+(load custom-file t)
 
 ;; display time in mode-line
 (setq display-time-string-forms
@@ -38,10 +65,6 @@
 (setenv "no_proxy" (concat "gist.github.com," (getenv "no_proxy")))
 
 ;;;; base configs
-;; set the garbage collection threshold to
-;; every 20mb allocations
-(setq gc-cons-threshold 20000000)
-
 ;; enable native clipboard
 (setq x-select-enabled-clipboard t)
 
