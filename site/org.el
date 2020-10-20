@@ -1,23 +1,49 @@
 ;; and ensure file references
+(setq docs-dir (getenv "DOCS_DIR"))
+
+(defun dw/org-path (path)
+  (expand-file-name path docs-dir))
+
+(setq org-journal-dir (dw/org-path "Journal/"))
+
+(defun dw/get-todays-journal-file-name ()
+  "Gets the journal file name for today's date"
+  (interactive)
+  (let* ((journal-file-name
+           (expand-file-name
+             (format-time-string "%Y/%Y-%2m-%B.org")
+             org-journal-dir))
+         (journal-year-dir (file-name-directory journal-file-name)))
+    (if (not (file-directory-p journal-year-dir))
+      (make-directory journal-year-dir))
+    journal-file-name))
+
+(setq org-default-notes-file (dw/org-path "Projects.org"))
+
 (use-package paren
   :config
   (set-face-attribute 'show-paren-match-expression nil :background "#363e4a")
   (show-paren-mode 1))
 
-(use-package visual-fill
-  :defer t
-  :hook (org-mode . dw/org-mode-visual-fill))
+;; (use-package visual-fill
+;;   :defer t
+;;   :hook (org-mode . dw/org-mode-visual-fill))
 
 (use-package org
+  :hook (org-mode . efs/org-mode-setup)
   :config
   (add-to-list 'auto-mode-alist
                '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode)))
 
-(require 'org-protocol)
 
-(setq org-agenda-files (quote (
-                               "~/journal"
-                               "~/journal/tep")))
+(setq org-agenda-files
+  (list
+    (dw/org-path "Work.org")
+    (dw/org-path "Calendar/Personal.org")
+    (dw/org-path "Calendar/Work.org")
+    (dw/org-path "Projects.org")))
+
+(require 'org-protocol)
 
 ;; key bindings
 (global-set-key "\C-cl" 'org-)
