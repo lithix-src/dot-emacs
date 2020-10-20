@@ -40,8 +40,9 @@
         (list
          (dw/org-path "Projects.org")
          (dw/org-path "Work.org")
+         (dw/org-path "Archive.org")
          (dw/org-path "Finance/Finances.org")
-         (dw/org-path "Calendar/Personaql.org")
+         (dw/org-path "Calendar/Personal.org")
          (dw/org-path "Calendar/Work.org")))
 
   (setq org-agenda-start-with-log-mode t)
@@ -85,7 +86,7 @@
 
 (setq org-todo-keywords
       (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-              (sequence "BACKLOG(b)" "ACTIVE(a)" "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
+              (sequence "BACKLOG(b)" "ACTIVE(a)" "WAITING(w@/!)" "HOLD(h@/!)" "PLAN(p)" "|" "CANCELLED(c@/!)"))))
 
 (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "red" :weight bold)
@@ -94,6 +95,7 @@
               ("DONE" :foreground "forest green" :weight bold)
               ("WAITING" :foreground "orange" :weight bold)
               ("HOLD" :foreground "magenta" :weight bold)
+              ("PLAN" :foreground "light slate blue" :weight bold)
               ("CANCELLED" :foreground "forest green" :weight bold))))
 
 (setq org-use-fast-todo-selection t)
@@ -106,6 +108,7 @@
               (done ("WAITING") ("HOLD"))
               ("NEXT" ("WAITING") ("CANCELLED") ("HOLD") ("BACKLOG"))
               ("BACKLOG" ("WAITING") ("CANCELLED") ("HOLD") ("ACTIVE") ("NEXT"))
+              ("PLAN" ("WAITING") ("CANCELLED") ("HOLD") ("ACTIVE") ("NEXT") ("BACKLOG") ("ACTIVE"))
               ("ACTIVE" ("WAITING") ("CANCELLED") ("HOLD") ("NEXT") ("TODO") ("BACKLOG"))
               ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
 
@@ -118,24 +121,80 @@
 ;; I use C-c c to start capture mode
 (global-set-key (kbd "<f9>") 'org-capture)
 
+;; Configure custom agenda views
+(setq org-agenda-custom-commands
+  '(("d" "Dashboard"
+     ((agenda "" ((org-deadline-warning-days 7)))
+      (todo "PROC" ((org-agenda-overriding-header "Process Tasks")))
+      (todo "NEXT"
+        ((org-agenda-overriding-header "Next Tasks")))
+      (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))))
+      ;; (todo "TODO"
+      ;;   ((org-agenda-overriding-header "Unprocessed Inbox Tasks")
+      ;;    (org-agenda-files `(,dw/org-inbox-path))
+      ;;    (org-agenda-text-search-extra-files nil)))))
+
+    ("n" "Next Tasks"
+     ((todo "NEXT"
+        ((org-agenda-overriding-header "Next Tasks")))))
+
+    ("p" "Active Projects"
+     ((agenda "")
+      (todo "ACTIVE"
+        ((org-agenda-overriding-header "Active Projects")
+         (org-agenda-max-todos 5)
+         (org-agenda-files org-agenda-files)))))
+
+    ("w" "Workflow Status"
+     ((todo "WAITING"
+            ((org-agenda-overriding-header "Waiting on External")
+             (org-agenda-files org-agenda-files)))
+      (todo "PLAN"
+            ((org-agenda-overriding-header "In Planning")
+             (org-agenda-todo-list-sublevels nil)
+             (org-agenda-files org-agenda-files)))
+      (todo "BACKLOG"
+            ((org-agenda-overriding-header "Project Backlog")
+             (org-agenda-todo-list-sublevels nil)
+             (org-agenda-files org-agenda-files)))
+      (todo "ACTIVE"
+            ((org-agenda-overriding-header "Active Projects")
+             (org-agenda-files org-agenda-files)))
+      (todo "CANCELLED"
+            ((org-agenda-overriding-header "Cancelled Projects")
+             (org-agenda-files org-agenda-files)))))
+
+    ;; Projects on hold
+    ("h" tags-todo "+LEVEL=2/+HOLD"
+     ((org-agenda-overriding-header "On-hold Projects")
+      (org-agenda-files org-agenda-files)))
+
+    ;; Low-effort next actions
+    ("e" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
+     ((org-agenda-overriding-header "Low Effort Tasks")
+      (org-agenda-max-todos 20)
+      (org-agenda-files org-agenda-files)))))
+
+(defun dw/read-file-as-string (path)
+  (with-temp-buffer
+    (insert-file-contents path)
+    (buffer-string)))
+
+(setq org-capture-templates
+  `(("t" "Tasks / Projects")
+    ("tt" "Task" entry (file+olp ,(dw/org-path "Work.org") "Tasks" "Refile")
+         "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)))
+
 ;; ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
 ;; (setq org-capture-templates
-;;       (quote (("t" "todo" entry (file "~/journal/refile.org")
+;;       (quote (("t" "todo" entry (file org-default-notes-file)
 ;;                "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-;;               ("r" "respond" entry (file "~/journal/refile.org")
+;;               ("r" "respond" entry (file org-default-notes-file)
 ;;                "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
-;;               ("n" "note" entry (file "~/journal/refile.org")
+;;               ("n" "note" entry (file org-default-notes-file)
 ;;                "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
-;;               ("j" "Journal" entry (file+datetree "~/journal/diary.org")
-;;                "* %?\n%U\n" :clock-in t :clock-resume t)
-;;               ("w" "org-protocol" entry (file "~/journal/refile.org")
-;;                "* TODO Review %c\n%U\n" :immediate-finish t)
-;;               ("m" "Meeting" entry (file "~/journal/refile.org")
-;;                "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
-;;               ("p" "Phone call" entry (file "~/journal/refile.org")
-;;                "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
-;;               ("h" "Habit" entry (file "~/journal/refile.org")
-;;                "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
+;;               ("w" "org-protocol" entry (file org-default-notes-file)
+;;                "* TODO Review %c\n%U\n" :immediate-finish t))))
 
 ;; Remove empty LOGBOOK drawers on clock out
 (defun bh/remove-empty-drawer-on-clock-out ()
@@ -150,6 +209,7 @@
 (setq org-refile-targets (quote ((nil :maxlevel . 9)
                                  (org-agenda-files :maxlevel . 9))))
 
+(advice-add 'org-refile :after 'org-save-all-org-buffers)
 ; Use full outline paths for refile targets - we file directly with IDO
 (setq org-refile-use-outline-path t)
 
@@ -182,79 +242,6 @@
 ;; Compact the block agenda view
 (setq org-agenda-compact-blocks t)
 
-;; Custom agenda command definitions
-(setq org-agenda-custom-commands
-      (quote (("N" "Notes" tags "NOTE"
-               ((org-agenda-overriding-header "Notes")
-                (org-tags-match-list-sublevels t)))
-              ("h" "Habits" tags-todo "STYLE=\"habit\""
-               ((org-agenda-overriding-header "Habits")
-                (org-agenda-sorting-strategy
-                 '(todo-state-down effort-up category-keep))))
-              (" " "Agenda"
-               ((agenda "" nil)
-                (tags "REFILE"
-                      ((org-agenda-overriding-header "Tasks to Refile")
-                       (org-tags-match-list-sublevels nil)))
-                (tags-todo "-CANCELLED/!"
-                           ((org-agenda-overriding-header "Stuck Projects")
-                            (org-agenda-skip-function 'bh/skip-non-stuck-projects)
-                            (org-agenda-sorting-strategy
-                             '(category-keep))))
-                (tags-todo "-HOLD-CANCELLED/!"
-                           ((org-agenda-overriding-header "Projects")
-                            (org-agenda-skip-function 'bh/skip-non-projects)
-                            (org-tags-match-list-sublevels 'indented)
-                            (org-agenda-sorting-strategy
-                             '(category-keep))))
-                (tags-todo "-CANCELLED/!NEXT"
-                           ((org-agenda-overriding-header (concat "Project Next Tasks"
-                                                                  (if bh/hide-scheduled-and-waiting-next-tasks
-                                                                      ""
-                                                                    " (including WAITING and SCHEDULED tasks)")))
-                            (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks)
-                            (org-tags-match-list-sublevels t)
-                            (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-                            (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
-                            (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
-                            (org-agenda-sorting-strategy
-                             '(todo-state-down effort-up category-keep))))
-                (tags-todo "-REFILE-CANCELLED-WAITING-HOLD/!"
-                           ((org-agenda-overriding-header (concat "Project Subtasks"
-                                                                  (if bh/hide-scheduled-and-waiting-next-tasks
-                                                                      ""
-                                                                    " (including WAITING and SCHEDULED tasks)")))
-                            (org-agenda-skip-function 'bh/skip-non-project-tasks)
-                            (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-                            (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
-                            (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
-                            (org-agenda-sorting-strategy
-                             '(category-keep))))
-                (tags-todo "-REFILE-CANCELLED-WAITING-HOLD/!"
-                           ((org-agenda-overriding-header (concat "Standalone Tasks"
-                                                                  (if bh/hide-scheduled-and-waiting-next-tasks
-                                                                      ""
-                                                                    " (including WAITING and SCHEDULED tasks)")))
-                            (org-agenda-skip-function 'bh/skip-project-tasks)
-                            (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-                            (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
-                            (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
-                            (org-agenda-sorting-strategy
-                             '(category-keep))))
-                (tags-todo "-CANCELLED+WAITING|HOLD/!"
-                           ((org-agenda-overriding-header (concat "Waiting and Postponed Tasks"
-                                                                  (if bh/hide-scheduled-and-waiting-next-tasks
-                                                                      ""
-                                                                    " (including WAITING and SCHEDULED tasks)")))
-                            (org-agenda-skip-function 'bh/skip-non-tasks)
-                            (org-tags-match-list-sublevels nil)
-                            (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-                            (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)))
-                (tags "-REFILE/"
-                      ((org-agenda-overriding-header "Tasks to Archive")
-                       (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
-                       (org-tags-match-list-sublevels nil))))
-               nil))))
 
 ;; I have the following setup to allow / RET to filter tasks based on the description
 (defun bh/org-auto-exclude-function (tag)
@@ -375,11 +362,6 @@
 
 ;; Start the weekly agenda on Monday
 (setq org-agenda-start-on-weekday 1)
-
-;; Enable display of the time grid so we can see the marker for the current time
-(setq org-agenda-time-grid (quote ((daily today remove-match)
-                                   #("----------------" 0 16 (org-heading t))
-                                   (0900 1100 1300 1500 1700))))
 
 ;; Display tags farther right
 (setq org-agenda-tags-column -102)
@@ -575,3 +557,20 @@ Late deadlines first, then scheduled, then non-late deadlines"
 (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
 
 (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
+
+(use-package calfw
+  :disabled
+  :commands cfw:open-org-calendar
+  :config
+  (setq cfw:fchar-junction ?╋
+        cfw:fchar-vertical-line ?┃
+        cfw:fchar-horizontal-line ?━
+        cfw:fchar-left-junction ?┣
+        cfw:fchar-right-junction ?┫
+        cfw:fchar-top-junction ?┯
+        cfw:fchar-top-left-corner ?┏
+        cfw:fchar-top-right-corner ?┓)
+
+  (use-package calfw-org
+    :config
+    (setq cfw:org-agenda-schedule-args '(:timestamp))))
