@@ -41,9 +41,12 @@
          (dw/org-path "Projects.org")
          (dw/org-path "Work.org")
          (dw/org-path "Archive.org")
+         (dw/org-path "Journal/Notes.org")
          (dw/org-path "Finance/Finances.org")
          (dw/org-path "Calendar/Personal.org")
-         (dw/org-path "Calendar/Work.org")))
+         (dw/org-path "Calendar/Work.org")
+         (dw/org-path "TEP/Work.org")
+         (dw/org-path "Unify/Work.org")))
 
   (setq org-agenda-start-with-log-mode t)
   (setq org-log-done 'time)
@@ -86,7 +89,7 @@
 
 (setq org-todo-keywords
       (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-              (sequence "BACKLOG(b)" "ACTIVE(a)" "WAITING(w@/!)" "HOLD(h@/!)" "PLAN(p)" "|" "CANCELLED(c@/!)"))))
+              (sequence "BACKLOG(b)" "ACTIVE(a)" "WAITING(w@/!)" "HOLD(h@/!)" "PLAN(p)" "NOTE(n)" "|" "CANCELLED(c@/!)"))))
 
 (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "red" :weight bold)
@@ -96,6 +99,7 @@
               ("WAITING" :foreground "orange" :weight bold)
               ("HOLD" :foreground "magenta" :weight bold)
               ("PLAN" :foreground "light slate blue" :weight bold)
+              ("NOTE" :foreground "pale turquoise" :weight bold)
               ("CANCELLED" :foreground "forest green" :weight bold))))
 
 (setq org-use-fast-todo-selection t)
@@ -109,6 +113,7 @@
               ("NEXT" ("WAITING") ("CANCELLED") ("HOLD") ("BACKLOG"))
               ("BACKLOG" ("WAITING") ("CANCELLED") ("HOLD") ("ACTIVE") ("NEXT"))
               ("PLAN" ("WAITING") ("CANCELLED") ("HOLD") ("ACTIVE") ("NEXT") ("BACKLOG") ("ACTIVE"))
+              ("NOTE" ("WAITING") ("CANCELLED") ("HOLD") ("ACTIVE") ("NEXT") ("BACKLOG") ("PLAN") ("ACTIVE"))
               ("ACTIVE" ("WAITING") ("CANCELLED") ("HOLD") ("NEXT") ("TODO") ("BACKLOG"))
               ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
 
@@ -125,14 +130,10 @@
 (setq org-agenda-custom-commands
   '(("d" "Dashboard"
      ((agenda "" ((org-deadline-warning-days 7)))
-      (todo "PROC" ((org-agenda-overriding-header "Process Tasks")))
+      (todo "NOTE" ((org-agenda-overriding-header "Notes")))
       (todo "NEXT"
         ((org-agenda-overriding-header "Next Tasks")))
       (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))))
-      ;; (todo "TODO"
-      ;;   ((org-agenda-overriding-header "Unprocessed Inbox Tasks")
-      ;;    (org-agenda-files `(,dw/org-inbox-path))
-      ;;    (org-agenda-text-search-extra-files nil)))))
 
     ("n" "Next Tasks"
      ((todo "NEXT"
@@ -183,7 +184,10 @@
 (setq org-capture-templates
   `(("t" "Tasks / Projects")
     ("tt" "Task" entry (file+olp ,(dw/org-path "Work.org") "Tasks" "Refile")
-         "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)))
+         "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
+    ("n" "Notes / Responses")
+    ("nn" "Note" entry (file+olp ,(dw/org-path "Journal/Notes.org") "Note")
+              "* NOTE %?\n  %U\n  %a\n  %i" :empty-lines 1))))
 
 ;; ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
 ;; (setq org-capture-templates
