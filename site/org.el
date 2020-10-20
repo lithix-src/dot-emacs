@@ -123,21 +123,22 @@
 ;; I use C-c c to start capture mode
 (global-set-key (kbd "<f9>") 'org-capture)
 
-;; I use C-c c to start capture mode
-(global-set-key (kbd "<f9>") 'org-capture)
-
 ;; Configure custom agenda views
 (setq org-agenda-custom-commands
   '(("d" "Dashboard"
      ((agenda "" ((org-deadline-warning-days 7)))
-      (todo "NOTE" ((org-agenda-overriding-header "Notes")))
+      (todo "NOTE" ((org-agenda-overriding-header "Notes"))) ; still doesn't work, can't see notes
       (todo "NEXT"
         ((org-agenda-overriding-header "Next Tasks")))
       (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))))
 
-    ("n" "Next Tasks"
+    ("x" "Next Tasks"
      ((todo "NEXT"
         ((org-agenda-overriding-header "Next Tasks")))))
+
+    ("n" "Notes"
+     ((todo "NOTE"
+            ((org-agenda-overriding-header "Notes"))))) ; still not working either : (
 
     ("p" "Active Projects"
      ((agenda "")
@@ -187,7 +188,7 @@
          "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
     ("n" "Notes / Responses")
     ("nn" "Note" entry (file+olp ,(dw/org-path "Journal/Notes.org") "Note")
-              "* NOTE %?\n  %U\n  %a\n  %i" :empty-lines 1))))
+              "* NOTE %?\n  %U\n  %a\n  %i" :empty-lines 1)))
 
 ;; ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
 ;; (setq org-capture-templates
