@@ -74,27 +74,6 @@
 
 (use-package popup)
 
-(use-package nyan-mode
-  :ensure t ;; install package if not found OR: (setq use-package-always-ensure t)
-  :init
-  (setq nyan-bar-length 20)
-  :config
-  (nyan-mode t))
-
-(use-package smart-mode-line
-  :ensure t ;; install package if not found OR: (setq use-package-always-ensure t)
-  :config
-  (setq sml/no-confirm-load-theme t)
-  (setq sml/theme 'respectful) ;; select theme: light, dark, respectful
-  ;; hiding minor modes from mode line (don't forget the leading space)
-  (setq rm-blacklist '(" Fill" " Ind" " MRev" " hl-p" " Guide" " OrgStruct" " ," " PCRE" " counsel" " OTSH" " dired-icon" " GitGutter" " WK" " FlyC-" " Ddl" " Diary"))
-  ;; does not hide in Org-agenda:  "Diary " "Ddl " "Grid " "Habit " "FlyC " "WK "
-  ;; replacing path names with abbrevations:
-  (add-to-list 'sml/replacer-regexp-list '("^.*/.emacs.d" ":EMACS:") t)
-  (add-to-list 'sml/replacer-regexp-list '("^.*/projects/" ":PRJ:") t)
-  (add-to-list 'sml/replacer-regexp-list '("^.*/projects/compliance_science" ":TEP:") t)
-  (smart-mode-line-enable))
-
 ;; icons in mode-line instead of text
 (use-package mode-icons
   :config
@@ -144,3 +123,7 @@
    'auto-mode-alist
    '("\\.tf\\'" . hcl-mode)
    '(("\\.nomad\\'" hcl-mode))))
+
+(use-package expand-region
+  :bind (("M-[" . er/expand-region)
+         ("C-(" . er/mark-outside-pairs)))

@@ -82,3 +82,78 @@
 (use-package emojify
   :hook (erc-mode . emojify-mode)
   :commands emojify-mode)
+
+(setq display-time-format "%l:%M %p %b %y"
+      display-time-default-load-average nil)
+
+;; hides pesky minor modes from the modelines
+(use-package diminish)
+
+(use-package smart-mode-line
+  :ensure t
+  :config
+  (setq sml/no-confirm-load-theme t)
+  (sml/setup)
+  (sml/apply-theme 'respectful)  ; Respect the theme colors
+  (setq sml/mode-width 'right
+      sml/name-width 60)
+  (setq rm-blacklist
+        '(" Fill" " Ind" " MRev" " hl-p" " Guide" " OrgStruct" " ," " PCRE" " counsel" " OTSH" " dired-icon" " GitGutter" " WK" " FlyC-" " Ddl" " Diary"))
+  (add-to-list 'sml/replacer-regexp-list '("^.*/.emacs.d" ":EMACS:") t)
+  (add-to-list 'sml/replacer-regexp-list '("^.*/projects/" ":PRJ:") t)
+  (add-to-list 'sml/replacer-regexp-list '("^.*/projects/compliance_science" ":TEP:") t)
+  (add-to-list 'sml/replacer-regexp-list '("^.*/Journal/" ":JRNL:") t)
+  (setq-default mode-line-format
+  `("%e"
+    mode-line-front-space
+    mode-line-mule-info
+    mode-line-client
+    mode-line-modified
+    mode-line-remote
+    mode-line-frame-identification
+    mode-line-buffer-identification
+    sml/pos-id-separator
+    (vc-mode vc-mode)
+    " "
+                                        ;mode-linae-position
+    sml/pre-modes-separator
+    mode-line-modes
+    " "
+    mode-line-misc-info))
+
+  (setq rm-excluded-modes
+    (mapconcat
+      'identity
+      ; These names must start with a space!
+      '(" GitGutter" " MRev" " company"
+      " Helm" " Undo-Tree" " Projectile.*" " Z" " Ind"
+      " Org-Agenda.*" " ElDoc" " SP/s" " cider.*")
+      "\\|"))
+  (smart-mode-line-enable))
+
+(use-package alert
+  :commands alert
+  :config
+  (setq alert-default-style 'notifications))
+
+(setq display-time-world-list
+  '(("America/Los_Angeles" "Seattle")
+    ("America/New_York" "New York")
+    ("Europe/Athens" "Athens")
+    ("Pacific/Auckland" "Auckland")
+    ("Asia/Shanghai" "Shanghai")))
+
+(setq display-time-world-time-format "%a, %d %b %I:%M %p %Z")
+
+(use-package default-text-scale
+  :defer 1
+  :config
+  (default-text-scale-mode))(use-package default-text-scale
+  :defer 1
+  :config
+  (default-text-scale-mode))
+
+(use-package ace-window
+  :bind (("M-o" . ace-window))
+  :config
+  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))

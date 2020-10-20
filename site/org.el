@@ -1,4 +1,12 @@
 ;; and ensure file references
+(use-package paren
+  :config
+  (set-face-attribute 'show-paren-match-expression nil :background "#363e4a")
+  (show-paren-mode 1))
+
+(use-package visual-fill
+  :defer t
+  :hook (org-mode . dw/org-mode-visual-fill))
 
 (use-package org
   :config
