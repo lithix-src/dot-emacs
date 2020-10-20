@@ -25,10 +25,10 @@
 
 (set-face-attribute 'default nil :font "Fira Code Retina" :height 120)
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height 200)
+(set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height 120)
 
 ;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "Cantarell" :height 245 :weight 'regular)
+(set-face-attribute 'variable-pitch nil :font "Cantarell" :height 125 :weight 'regular)
 
 (defun my-vsplit-last-buffer ()
   (interactive)
