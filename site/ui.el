@@ -23,7 +23,7 @@
 (use-package doom-themes :defer t)
 (load-theme 'doom-palenight t)
 
-(set-face-attribute 'default nil :font "Fira Code Retina" :height 130)
+(set-face-attribute 'default nil :font "Fira Code Retina" :height 120)
 ;; Set the fixed pitch face
 (set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height 200)
 
