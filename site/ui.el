@@ -19,9 +19,16 @@
 ;; don't pop up front menu
 (global-set-key (kbd "s-t") '(lambda () (interactive)))
 
-(use-package doom-themes
-  :config
-  (load-theme 'doom-gruvbox t))
+(use-package spacegray-theme :defer t)
+(use-package doom-themes :defer t)
+(load-theme 'doom-palenight t)
+
+(set-face-attribute 'default nil :font "Fira Code Retina" :height 130)
+;; Set the fixed pitch face
+(set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height 200)
+
+;; Set the variable pitch face
+(set-face-attribute 'variable-pitch nil :font "Cantarell" :height 245 :weight 'regular)
 
 (defun my-vsplit-last-buffer ()
   (interactive)
@@ -46,3 +53,32 @@
 
 ;; No cursor blinking, it's distracting
 (blink-cursor-mode 0)
+
+(defun dw/replace-unicode-font-mapping (block-name old-font new-font)
+  (let* ((block-idx (cl-position-if
+                         (lambda (i) (string-equal (car i) block-name))
+                         unicode-fonts-block-font-mapping))
+         (block-fonts (cadr (nth block-idx unicode-fonts-block-font-mapping)))
+         (updated-block (cl-substitute new-font old-font block-fonts :test 'string-equal)))
+    (setf (cdr (nth block-idx unicode-fonts-block-font-mapping))
+          `(,updated-block))))
+
+
+(use-package unicode-fonts
+  :ensure t
+  :custom
+  (unicode-fonts-skip-font-groups '(low-quality-glyphs))
+  :config
+  ;; Fix the font mappings to use the right emoji font
+  (mapcar
+    (lambda (block-name)
+      (dw/replace-unicode-font-mapping block-name "Apple Color Emoji" "Noto Color Emoji"))
+    '("Dingbats"
+      "Emoticons"
+      "Miscellaneous Symbols and Pictographs"
+      "Transport and Map Symbols"))
+  (unicode-fonts-setup))
+
+(use-package emojify
+  :hook (erc-mode . emojify-mode)
+  :commands emojify-mode)
