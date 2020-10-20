@@ -30,20 +30,52 @@
 ;;   :hook (org-mode . dw/org-mode-visual-fill))
 
 (use-package org
-  :hook (org-mode . efs/org-mode-setup)
   :config
+  (require 'org-protocol)
+
   (add-to-list 'auto-mode-alist
-               '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode)))
+               '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))
+
+  (setq org-agenda-files
+        (list
+         (dw/org-path "Projects.org")
+         (dw/org-path "Work.org")
+         (dw/org-path "Finance/Finances.org")
+         (dw/org-path "Calendar/Personaql.org")
+         (dw/org-path "Calendar/Work.org")))
+
+  (setq org-agenda-start-with-log-mode t)
+  (setq org-log-done 'time)
+  (setq org-log-into-drawer t)
+
+  (setq org-agenda-window-setup 'other-window)
+  (setq org-agenda-span 'day)
+  (setq org-stuck-projects '("+LEVEL=2/TODO" ("NEXT") nil ""))
+  (setq org-agenda-start-with-log-mode t))
+
+(use-package org-bullets
+  :after org
+  :hook (org-mode . org-bullets-mode)
+  :custom
+  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
 
-(setq org-agenda-files
-  (list
-    (dw/org-path "Work.org")
-    (dw/org-path "Calendar/Personal.org")
-    (dw/org-path "Calendar/Work.org")
-    (dw/org-path "Projects.org")))
+;; Replace list hyphen with dot
+(font-lock-add-keywords 'org-mode
+                        '(("^ *\\([-]\\) "
+                          (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
-(require 'org-protocol)
+;; Make sure org-indent face is available
+(require 'org-indent)
+
+;; Ensure that anything that should be fixed-pitch in Org files appears that way
+(set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+(set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
+(set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+(set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+(set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+(set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
 
 ;; key bindings
 (global-set-key "\C-cl" 'org-)
@@ -53,17 +85,16 @@
 
 (setq org-todo-keywords
       (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
+              (sequence "BACKLOG(b)" "ACTIVE(a)" "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
 
 (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "red" :weight bold)
               ("NEXT" :foreground "blue" :weight bold)
+              ("ACTIVE" :foreground "cornflower blue" :weight bold)
               ("DONE" :foreground "forest green" :weight bold)
               ("WAITING" :foreground "orange" :weight bold)
               ("HOLD" :foreground "magenta" :weight bold)
-              ("CANCELLED" :foreground "forest green" :weight bold)
-              ("MEETING" :foreground "forest green" :weight bold)
-              ("PHONE" :foreground "forest green" :weight bold))))
+              ("CANCELLED" :foreground "forest green" :weight bold))))
 
 (setq org-use-fast-todo-selection t)
 (setq org-treat-S-cursor-todo-selection-as-state-change nil)
@@ -73,39 +104,38 @@
               ("WAITING" ("WAITING" . t))
               ("HOLD" ("WAITING") ("HOLD" . t))
               (done ("WAITING") ("HOLD"))
-              ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD") ("BACKLOG"))
+              ("BACKLOG" ("WAITING") ("CANCELLED") ("HOLD") ("ACTIVE") ("NEXT"))
+              ("ACTIVE" ("WAITING") ("CANCELLED") ("HOLD") ("NEXT") ("TODO") ("BACKLOG"))
               ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
 
-(setq org-directory "~/journal")
-(setq org-default-notes-file "~/journal/refile.org")
-
-;; I use C-c c to start capture mode
-(global-set-key (kbd "<f9>") 'org-capture)
-(setq org-directory "~/journal")
-(setq org-default-notes-file "~/journal/refile.org")
+(setq org-directory docs-dir)
+(setq org-default-notes-file (dw/org-path "Work.org"))
 
 ;; I use C-c c to start capture mode
 (global-set-key (kbd "<f9>") 'org-capture)
 
-;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
-(setq org-capture-templates
-      (quote (("t" "todo" entry (file "~/journal/refile.org")
-               "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-              ("r" "respond" entry (file "~/journal/refile.org")
-               "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
-              ("n" "note" entry (file "~/journal/refile.org")
-               "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
-              ("j" "Journal" entry (file+datetree "~/journal/diary.org")
-               "* %?\n%U\n" :clock-in t :clock-resume t)
-              ("w" "org-protocol" entry (file "~/journal/refile.org")
-               "* TODO Review %c\n%U\n" :immediate-finish t)
-              ("m" "Meeting" entry (file "~/journal/refile.org")
-               "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
-              ("p" "Phone call" entry (file "~/journal/refile.org")
-               "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
-              ("h" "Habit" entry (file "~/journal/refile.org")
-               "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
+;; I use C-c c to start capture mode
+(global-set-key (kbd "<f9>") 'org-capture)
+
+;; ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
+;; (setq org-capture-templates
+;;       (quote (("t" "todo" entry (file "~/journal/refile.org")
+;;                "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
+;;               ("r" "respond" entry (file "~/journal/refile.org")
+;;                "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+;;               ("n" "note" entry (file "~/journal/refile.org")
+;;                "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
+;;               ("j" "Journal" entry (file+datetree "~/journal/diary.org")
+;;                "* %?\n%U\n" :clock-in t :clock-resume t)
+;;               ("w" "org-protocol" entry (file "~/journal/refile.org")
+;;                "* TODO Review %c\n%U\n" :immediate-finish t)
+;;               ("m" "Meeting" entry (file "~/journal/refile.org")
+;;                "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
+;;               ("p" "Phone call" entry (file "~/journal/refile.org")
+;;                "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
+;;               ("h" "Habit" entry (file "~/journal/refile.org")
+;;                "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
 
 ;; Remove empty LOGBOOK drawers on clock out
 (defun bh/remove-empty-drawer-on-clock-out ()
