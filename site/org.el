@@ -25,12 +25,10 @@
   (set-face-attribute 'show-paren-match-expression nil :background "#363e4a")
   (show-paren-mode 1))
 
-;; (use-package visual-fill
-;;   :defer t
-;;   :hook (org-mode . dw/org-mode-visual-fill))
 
 (use-package org
   :config
+  (paredit +1)
   (require 'org-protocol)
 
   (add-to-list 'auto-mode-alist
@@ -40,6 +38,7 @@
         (list
          (dw/org-path "Projects.org")
          (dw/org-path "Work.org")
+         (dw/org-path "Scratch/Scratch.org")
          (dw/org-path "Archive.org")
          (dw/org-path "Journal/Notes.org")
          (dw/org-path "Finance/Finances.org")
@@ -53,7 +52,7 @@
   (setq org-log-into-drawer t)
 
   (setq org-agenda-window-setup 'other-window)
-  (setq org-agenda-span 'day)
+  (setq org-agenda-span 2)
   (setq org-stuck-projects '("+LEVEL=2/TODO" ("NEXT") nil ""))
   (setq org-agenda-start-with-log-mode t))
 
@@ -89,7 +88,7 @@
 
 (setq org-todo-keywords
       (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-              (sequence "BACKLOG(b)" "ACTIVE(a)" "WAITING(w@/!)" "HOLD(h@/!)" "PLAN(p)" "NOTE(n)" "|" "CANCELLED(c@/!)"))))
+              (sequence "BACKLOG(b)" "ACTIVE(a)" "WAITING(w@/!)" "HOLD(h@/!)" "PLAN(p)" "NOTE(N)" "|" "CANCELLED(c@/!)"))))
 
 (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "red" :weight bold)
