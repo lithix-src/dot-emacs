@@ -1,9 +1,17 @@
 ;; site/clojure.el
 
 ;; Clojure stuff
-(use-package clojure-mode)
+(use-package paredit
+  :config
+  (add-hook 'auto-mode-alist '("\\*edn$\\'" . paredit-mode)))
+
+(use-package clojure-mode
+  :config
+  (add-hook 'clojure-mode-hook '(lambda () (paredit-mode 1))))
+
 (use-package clojure-mode-extra-font-locking)
 (use-package cider)
+
 
 ;; Lisp-friendly hippie expand
 (setq hippie-expand-try-functions-list

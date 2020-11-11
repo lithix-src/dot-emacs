@@ -28,7 +28,6 @@
 
 (use-package org
   :config
-  (paredit +1)
   (require 'org-protocol)
 
   (add-to-list 'auto-mode-alist
