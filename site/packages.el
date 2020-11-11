@@ -9,7 +9,10 @@
 (require `use-package)
 
 ;; paredit mode
-(use-package paredit)
+(use-package paredit
+  :config
+  (add-hook 'auto-mode-alist '("\\*edn$\\'" . paredit-mode))
+  (add-hook 'auto-mode-alist '("\\*.el$\\'" . paredit-mode)))
 
 (use-package projectile
   :config

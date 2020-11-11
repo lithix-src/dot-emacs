@@ -1,10 +1,6 @@
 ;; site/clojure.el
 
 ;; Clojure stuff
-(use-package paredit
-  :config
-  (add-hook 'auto-mode-alist '("\\*edn$\\'" . paredit-mode)))
-
 (use-package clojure-mode
   :config
   (add-hook 'clojure-mode-hook '(lambda () (paredit-mode 1))))
