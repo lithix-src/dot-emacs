@@ -1,4 +1,5 @@
 ;; site/python.el
+(setq python-shell-interpreter "python3")
 
 (use-package flycheck)
 
@@ -10,9 +11,6 @@
               ("C-c C-s" . py-send-string)
               ("C-c C-z" . py-switch-to-shell)))
 
-(setq python-shell-interpreter "python3")
-(setq py-python-command "python3")
-(setq python-shell-interpreter-args "-m IPython --simple-prompt -i")
 (setq flycheck-python-pycompile-executable "python3")
 (setq doom-modeline-python-executable "python3")
 (defvar doom-modeline-python-executable "python"
@@ -58,22 +56,68 @@
     :config
     (company-quickhelp-mode))
 
-(use-package pyenv
-    :straight (:host github :repo "aiguofer/pyenv.el")
-    :config
-    (setq pyenv-installation-dir (getenv "PYENV"))
-    (setq pyenv-use-alias 't)
-    (setq pyenv-modestring-postfix nil)
-    (setq pyenv-set-path (getenv "PYENV_ROOT"))
-
-(global-pyenv-mode)
-    (defun pyenv-update-on-buffer-switch (prev curr)
-      (if (string-equal "Python" (format-mode-line mode-name nil nil curr))
-          (pyenv-use-corresponding)))
-    (add-hook 'switch-buffer-functions 'pyenv-update-on-buffer-switch))
-
 (setq
- python-shell-interpreter "ipython"
+ python-shell-interpreter "ipython3"
  python-shell-interpreter-args "--colors=Linux --profile=default -i"
  python-shell-prompt-regexp "In \\[0-9]+\\]: "
  python-shell-prompt-output-regexp "Out \\[0-9]+\\]:")
+
+(use-package company-jedi
+  :ensure t
+  :config
+  :hook
+  ((python-mode . jedi:setup))
+  :init
+  (setq jedi:complete-on-dot t)
+  (setq jedi:use-shortcuts t)
+  (add-hook 'python-mode-hook
+            (lambda () (add-to-list 'company-backends 'company-jedi))))
+
+(use-package pyenv
+  :straight (:host github :repo "aiguofer/pyenv.el")
+  :ensure t
+  :config
+  (global-pyenv-mode))
+
+(use-package python
+  :mode ("\\.py\\'" . python-mode)
+        ("\\.wsgi$" . python-mode)
+  :interpreter ("python" . python-mode)
+
+  :init
+  (setq-default indent-tabs-mode nil)
+
+  :config
+  (setq python-indent-offset 4)
+  (add-hook 'python-mode-hook 'smartparens-mode)
+  (add-hook 'python-mode-hook 'color-identifiers-mode))
+
+(use-package jedi
+  :ensure t
+  :init
+  (add-to-list 'company-backends 'company-jedi)
+  :config
+  (use-package company-jedi
+    :ensure t
+    :init
+    (add-hook 'python-mode-hook (lambda () (add-to-list 'company-backends 'company-jedi)))
+    (setq company-jedi-python-bin "python")))
+
+(use-package elpy
+  :ensure t
+  :commands elpy-enable
+  :init (with-eval-after-load 'python (elpy-enable))
+
+  :config
+  (electric-indent-local-mode -1)
+  (delete 'elpy-module-highlight-indentation elpy-modules)
+  (delete 'elpy-module-flymake elpy-modules)
+
+  (defun ha/elpy-goto-definition ()
+    (interactive)
+    (condition-case err
+        (elpy-goto-definition)
+      ('error (xref-find-definitions (symbol-name (symbol-at-point))))))
+
+  :bind (:map elpy-mode-map ([remap elpy-goto-definition] .
+                             ha/elpy-goto-definition)))
