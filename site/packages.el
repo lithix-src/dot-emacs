@@ -11,8 +11,10 @@
 (use-package tabbar
   :ensure t
   :config
-  (global-set-key (kbd "M-`") tab-next)
-  (global-set-key (kbd "M-~") tab-bar-switch-to-prev-tab))
+  (global-set-key (kbd "C-c t") 'tab-next)
+  (global-set-key (kbd "C-c T") 'tab-bar-switch-to-prev-tab)
+  (global-set-key (kbd "C-c n") 'tab-new)
+  (global-set-key (kbd "C-c W") 'tab-close))
 
 ;; global mode
 (use-package paredit
