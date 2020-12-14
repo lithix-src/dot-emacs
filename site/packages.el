@@ -8,7 +8,13 @@
 (straight-use-package 'use-package)
 (require `use-package)
 
-;; paredit mode
+(use-package tabbar
+  :ensure t
+  :config
+  (global-set-key (kbd "M-`") tab-next)
+  (global-set-key (kbd "M-~") tab-bar-switch-to-prev-tab))
+
+;; global mode
 (use-package paredit
   :config
   (add-hook 'auto-mode-alist '("\\*edn$\\'" . paredit-mode))
