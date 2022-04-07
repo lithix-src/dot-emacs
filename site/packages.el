@@ -1,4 +1,3 @@
-
 ;; site/packages.el
 
 ;; enable straight as default manager
@@ -26,6 +25,9 @@
   :config
   (projectile-mode +1)
   (setq projetctil-auto-discover t)
+  (setq projectile-project-search-path '(
+                                         "/mnt/c/Users/erikb/Documents/Projects/Code"
+                                         "~/tmp" . 1))
   (define-key projectile-mode-map (kbd "M-p") 'projectile-command-map)
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
 

@@ -130,10 +130,13 @@
           (load "org"))
 
 ;;;; coding
-(add-hook 'after-init-hook
-          (load "python"))
+;; (add-hook 'after-init-hook
+;;           (load "python"))
+
+;; (add-hook 'after-init-hook
+;;           (load "clojure"))
 
 (add-hook 'after-init-hook
-          (load "clojure"))
+          (load "rust"))
 
 (put 'narrow-to-region 'disabled nil)
